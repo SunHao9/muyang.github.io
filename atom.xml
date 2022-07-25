@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://muyang24.github.io</id>
+    <title>Gridea</title>
+    <updated>2022-07-25T03:48:30.536Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://muyang24.github.io"/>
+    <link rel="self" href="https://muyang24.github.io/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://muyang24.github.io/images/avatar.png</logo>
+    <icon>https://muyang24.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2022, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[JVM]]></title>
+        <id>https://muyang24.github.io/post/jvm/</id>
+        <link href="https://muyang24.github.io/post/jvm/">
+        </link>
+        <updated>2022-07-25T03:23:46.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="jvm的组成部分">jvm的组成部分</h3>
+<h6 id="类加载器classloader">类加载器（ClassLoader）</h6>
+<h6 id="运行时数据区runtime-data-area">运行时数据区（Runtime Data Area）</h6>
+<h6 id="执行引擎execution-engine">执行引擎（Execution Engine）</h6>
+<h6 id="本地库接口native-interface">本地库接口（Native Interface）</h6>
+<h6 id="组件的作用-首先通过类加载器classloader会把-java-代码转换成字节码运行时数据区runtime-data-area再把字节码加载到内存中而字节码文件只是-jvm-的一套指令集规范并不能直接交个底层操作系统去执行因此需要特定的命令解析器执行引擎execution-engine将字节码翻译成底层系统指令再交由-cpu-去执行而这个过程中需要调用其他语言的本地库接口native-interface来实现整个程序的功能">组件的作用： 首先通过类加载器（ClassLoader）会把 Java 代码转换成字节码，运行时数据区（Runtime Data Area）再把字节码加载到内存中，而字节码文件只是 JVM 的一套指令集规范，并不能直接交个底层操作系统去执行，因此需要特定的命令解析器执行引擎（Execution Engine），将字节码翻译成底层系统指令，再交由 CPU 去执行，而这个过程中需要调用其他语言的本地库接口（Native Interface）来实现整个程序的功能</h6>
+]]></content>
+    </entry>
+</feed>
