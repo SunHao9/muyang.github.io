@@ -1,0 +1,1059 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://muyang24.github.io</id>
+    <title>muyang</title>
+    <updated>2022-07-25T08:40:19.092Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://muyang24.github.io"/>
+    <link rel="self" href="https://muyang24.github.io/atom.xml"/>
+    <subtitle>muyang</subtitle>
+    <logo>https://muyang24.github.io/images/avatar.png</logo>
+    <icon>https://muyang24.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2022, muyang</rights>
+    <entry>
+        <title type="html"><![CDATA[Java面试题]]></title>
+        <id>https://muyang24.github.io/post/java-mian-shi-ti/</id>
+        <link href="https://muyang24.github.io/post/java-mian-shi-ti/">
+        </link>
+        <updated>2022-07-25T07:36:13.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="java">JAVA</h1>
+<h2 id="jvm">JVM</h2>
+<h3 id="jvm的组成部分">jvm的组成部分</h3>
+<p>类加载器（ClassLoader）</p>
+<p>运行时数据区（Runtime Data Area）</p>
+<p>执行引擎（Execution Engine）</p>
+<p>本地库接口（Native Interface）</p>
+<p>组件的作用： 首先通过类加载器（ClassLoader）会把 Java 代码转换成字节码，运行时数据区（Runtime Data Area）再把字节码加载到内存中，而字节码文件只是 JVM 的一套指令集规范，并不能直接交个底层操作系统去执行，因此需要特定的命令解析器执行引擎（Execution Engine），将字节码翻译成底层系统指令，再交由 CPU 去执行，而这个过程中需要调用其他语言的本地库接口（Native Interface）来实现整个程序的功能</p>
+<h3 id="java类加载器">Java类加载器</h3>
+<h4 id="botstrp-classloader">Botstrp ClassLoader</h4>
+<p>BootStrapClassLoader是ExtClassLoader的父类加载器，默认负责加载%JAVA_HOME%lib下的jar包和class文件</p>
+<h4 id="extclassloader">ExtClassLoader</h4>
+<p>ExtClassLoader是AppClassLoader的父类加载器，负责加载%JAVA_HOME%/lib/ext文件夹下的jar包和class类。</p>
+<h4 id="appclassloader">AppClassLoader</h4>
+<p>自定义类加载器的父类，负责加载classpath下的类文件。系统类加载器，线程上下文加载器</p>
+<h3 id="双亲委派模型">双亲委派模型</h3>
+<h4 id="概念">概念</h4>
+<p>如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此</p>
+<figure data-type="image" tabindex="1"><img src="https://muyang24.github.io/post-images/1658736333651.png" alt="" loading="lazy"></figure>
+<h4 id="双亲委派模型的好处">双亲委派模型的好处：</h4>
+<p>主要是为了安全性，避免用户自己编写的类动态替换 Java的一些核心类，比如 String。</p>
+<p>同时也避免了类的重复加载，因为 JVM中区分不同类，不仅仅是根据类名，相同的 class文件被不同的 ClassLoader加载就是不同的两个类</p>
+<h3 id="jvm类加载过程">JVM类加载过程</h3>
+<p>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制。</p>
+<p>它的整个生命周期包括：加载（Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化（Initialization）、使用（Using）和卸载（Unloading）7个阶段。其中验证、准备、解析3个部分统称为连接（Linking）</p>
+<h3 id="jvm内存区域">jvm内存区域:</h3>
+<p>主要分为程序计数器,虚拟机栈,本地方法栈,方法区,堆.还有就是直接内存.</p>
+<h4 id="线程私有">线程私有</h4>
+<h5 id="程序计数器">程序计数器:</h5>
+<p>当前线程所执行的字节码的行号指示器，每条线程都要有一个独立的程序计数器，这类内存也称为“线程私有”的内存.</p>
+<h5 id="虚拟机栈">虚拟机栈:</h5>
+<p>每个方法在执行的同时都会创建一个栈帧,用于存储局部变量表、操作数栈、动态链接、方法出口等信息,栈帧随着方法调用而创建，随着方法结束而销毁</p>
+<h5 id="本地方法栈">本地方法栈:</h5>
+<p>native方法</p>
+<h4 id="线程共享">线程共享</h4>
+<h5 id="堆heap">堆（Heap)</h5>
+<p>创建的对象和数组都保存在 Java 堆内存中，也是垃圾收集器进行垃圾收集的最重要的内存区域。</p>
+<h5 id="方法区">方法区</h5>
+<p>就是我们常说的<strong>永久代(Permanent Generation)</strong>, 用于存储被 JVM 加载的类信息**、<strong>常量</strong>、**静态变量、即时编译器编译后的代码等数据. HotSpot VM把GC分代收集扩展至方法区, 即使用Java堆的永久代来实现方法区.</p>
+<p>运行时常量池（Runtime Constant Pool）是方法区的一部分。Class 文件中除了有类的版本、字段、方法、接口等描述等信息外，还有一项信息是常量池（Constant Pool Table），用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后存放到方法区的运行时常量池中。</p>
+<h3 id="jvm运行时的内存">jvm运行时的内存</h3>
+<h4 id="新生代">新生代</h4>
+<p>频繁的创建对象.因此也会频繁的触发MinorGC(复制算法)进行垃圾回收.</p>
+<p>新生代分为3个区域,分别是 Eden 区, ServivorFrom ,ServivorTo</p>
+<h5 id="eden">Eden</h5>
+<p>Java 新对象的出生地（如果新创建的对象占用内存很大，则直接分配到老年代）。当 Eden 区内存不够的时候就会触发 MinorGC，对新生代区进行一次垃圾回收。</p>
+<h5 id="servivorfrom">ServivorFrom</h5>
+<p>上一次 GC 的幸存者，作为这一次 GC 的被扫描者。</p>
+<h5 id="servivorto">ServivorTo</h5>
+<p>保留了一次 MinorGC 过程中的幸存者。</p>
+<h4 id="老年代">老年代</h4>
+<p>主要存放应用程序中生命周期长的内存对象。采用的垃圾回收是<strong>MajorGC</strong>(标记整理算法)</p>
+<h5 id="majorgc的过程">majorGC的过程</h5>
+<p>首先扫描一次所有老年代，标记出存活的对象，然后回收没有标记的对象。MajorGC 的耗时比较长，因为要扫描再回收。MajorGC 会产生内存碎片.</p>
+<h4 id="永久代">永久代</h4>
+<p>指内存的永久保存区域，主要存放 Class 和 Meta（元数据）的信息,Class 在被加载的时候被放入永久区域，它和和存放实例的区域不同,GC 不会在主程序运行期对永久区域进行清理。所以这也导致了永久代的区域会随着加载的 Class 的增多而胀满，最终抛出 OOM 异常。</p>
+<p>在Java8中,久代已经被移除，被一个称为“元数据区”（元空间）的区域所取代。元空间的本质和永久代类似，元空间与永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。因此，默认情况下，元空间的大小仅受本地内存限制。类的元数据放入 native memory, 字符串池和类的静态变量放入 java 堆中，这样可以加载多少类的元数据就不再由MaxPermSize(最大非堆内存的大小，默认是物理内存的1/4) 控制, 而由系统的实际可用空间来控制。</p>
+<h3 id="minorgc的过程">MinorGC的过程</h3>
+<p>1.eden、servicorFrom <strong>复制到</strong> ServicorTo，年龄+1</p>
+<p>2.清空 eden、servicorFrom</p>
+<p>3.ServicorTo <strong>和</strong> ServicorFrom互换</p>
+<p>直到“To”区被填满，&quot;To&quot;区被填满之后，会将所有对象移动到年老代中</p>
+<h3 id="full-gc触发条件">Full GC触发条件</h3>
+<p>老年代空间不足</p>
+<p>方法去空间不足</p>
+<p>通过Minor GC后进入老年代的平均大小大于老年代的可用内存</p>
+<p>由Eden区、From Space区向To Space区复制时，对象大小大于To Space可用内存，则把该对象转存到老年代，且老年代的可用内存小于该对象大小</p>
+<p>调用System.gc时，系统建议执行Full GC，但是不必然执行</p>
+<h3 id="fullgc过程cms收集器为例">FullGC过程(cms收集器为例)</h3>
+<p>初始标记 ：在这个阶段，需要虚拟机停顿正在执行的任务，官方的叫法STW(Stop The Word)。这个过程从垃圾回收的&quot;根对象&quot;开始，只扫描到能够和&quot;根对象&quot;直接关联的对象，并作标记。所以这个过程虽然暂停了整个JVM，但是很快就完成了。</p>
+<p>并发标记 ：这个阶段紧随初始标记阶段，在初始标记的基础上继续向下追溯标记。并发标记阶段，应用程序的线程和并发标记的线程并发执行，所以用户不会感受到停顿。</p>
+<p>并发预清理 ：并发预清理阶段仍然是并发的。在这个阶段，虚拟机查找在执行并发标记阶段新进入老年代的对象(可能会有一些对象从新生代晋升到老年代， 或者有一些对象被分配到老年代)。通过重新扫描，减少下一个阶段&quot;重新标记&quot;的工作，因为下一个阶段会Stop The World。</p>
+<p>重新标记 ：这个阶段会暂停虚拟机，收集器线程扫描在CMS堆中剩余的对象。扫描从&quot;跟对象&quot;开始向下追溯，并处理对象关联。</p>
+<p>并发清理 ：清理垃圾对象，这个阶段收集器线程和应用程序线程并发执行。</p>
+<p>并发重置 ：这个阶段，重置CMS收集器的数据结构，等待下一次垃圾回收。</p>
+<h3 id="如何判断对象是否死亡可以被回收">如何判断对象是否死亡,可以被回收</h3>
+<h4 id="引用计数法java-jvm-不适用这种方式">引用计数法(java JVM 不适用这种方式)</h4>
+<p>给对象中添加⼀个引⽤计数器，每当有⼀个地⽅引⽤它，计数器就加1；当引⽤失效，计数器就减1；任何时候计数器为0的对象就是不可能再被使⽤的。</p>
+<p>不适用的原因 ： 假设对象a与b相互引用，除此之外没有其他引用指向a或者b。 在这种情况下，a和b实际上已经死了，但由于它们的引用计数器皆不为0，在引用计数器的心中，这两个对象还活着。 因此，这些循环引用对象所占据的空间将不可回收，从而造成了内存泄漏</p>
+<h4 id="可达性分析算法">可达性分析算法</h4>
+<p>这个算法的基本思想就是通过⼀系列的称为 <strong>“GC Roots”</strong> 的对象作为起点，从这些节点开始向下搜索，节点所⾛过的路径称为引⽤链，当⼀个对象到 GC Roots 没有任何引⽤链相连的话，则证明此对象是不可⽤的。</p>
+<h5 id="可以作为gc-root的对象">可以作为GC Root的对象</h5>
+<p>虚拟机栈(栈帧中的本地变量表)中引用的对象。(可以理解为:引用栈帧中的本地变量表的所有对象)</p>
+<p>方法区中静态属性引用的对象(可以理解为:引用方法区该静态属性的所有对象)</p>
+<p>方法区中常量引用的对象(可以理解为:引用方法区中常量的所有对象)</p>
+<p>本地方法栈中(Native方法)引用的对象(可以理解为:引用Native方法的所有对象)</p>
+<h3 id="垃圾回收器">垃圾回收器</h3>
+<h4 id="新生代-2">新生代</h4>
+<h5 id="1serial垃圾收集器-读音siəriəl英文连续-思儿瑞哦">1.Serial垃圾收集器 (读音:siəriəl,英文:连续) (思儿瑞哦)</h5>
+<p>Serial（英文连续）是最基本垃圾收集器，使用复制算法，</p>
+<p>曾经是JDK1.3.1 之前新生代唯一的垃圾收集器。Serial 是一个单线程的收集器，它不但只会使用一个 CPU 或一条线程去完成垃圾收集工作，并且在进行垃圾收集的同时，必须暂停其他所有的工作线程，直到垃圾收集结束。</p>
+<p>Serial 垃圾收集器虽然在收集垃圾过程中需要暂停所有其他的工作线程，但是它简单高效，对于限定单个 CPU 环境来说，没有线程交互的开销，可以获得最高的单线程垃圾收集效率，因此 Serial垃圾收集器依然是 java 虚拟机运行在 Client 模式下默认的新生代垃圾收集器。</p>
+<h5 id="2parnew-垃圾收集器serial多线程读音趴儿牛">2.ParNew 垃圾收集器（Serial+多线程）(读音:趴儿牛)</h5>
+<p>ParNew 垃圾收集器其实是 Serial 收集器的多线程版本，也使用复制算法，除了使用多线程进行垃圾收集之外，其余的行为和 Serial 收集器完全一样，ParNew 垃圾收集器在垃圾收集过程中同样也要暂停所有其他的工作线程。</p>
+<p>ParNew 收集器默认开启和 CPU 数目相同的线程数，可以通过-XX:ParallelGCThreads 参数来限制垃圾收集器的线【Parallel：平行的】</p>
+<p>ParNew虽然是除了多线程外和Serial 收集器几乎完全一样，但是ParNew垃圾收集器是很多 java虚拟机运行在 Server 模式下新生代的默认垃圾收集器。</p>
+<h5 id="3parallel-scavenge-收集器多线程复制算法-高效读音趴儿瑞赖哦-思开文之">3.Parallel Scavenge 收集器（多线程复制算法、高效）(读音:趴儿瑞赖哦 思开文之 )</h5>
+<p>Parallel Scavenge 收集器也是一个新生代垃圾收集器，同样使用复制算法，也是一个多线程的垃圾收集器，</p>
+<p>它重点关注的是程序达到一个可控制的吞吐量（Thoughput，CPU 用于运行用户代码的时间/CPU 总消耗时间，即吞吐量=运行用户代码时间/(运行用户代码时间+垃圾收集时间)），高吞吐量可以最高效率地利用 CPU 时间，尽快地完成程序的运算任务，主要适用于在后台运算而不需要太多交互的任务。</p>
+<p>自适应调节策略也是 ParallelScavenge 收集器与 ParNew 收集器的一个重要区别。</p>
+<h4 id="老年代-2">老年代</h4>
+<h5 id="4serial-old-收集器单线程标记整理算法">4.Serial Old 收集器（单线程标记整理算法 )</h5>
+<p>Serial Old 是 Serial 垃圾收集器年老代版本，它同样是个单线程的收集器，使用标记-整理算法，</p>
+<p>这个收集器也主要是运行在 Client 默认的 java 虚拟机默认的年老代垃圾收集器。</p>
+<h5 id="5parallel-old-收集器多线程标记整理算法读音趴儿瑞赖哦">5.Parallel Old <strong>收集器（多线程标记整理算法）</strong>(读音:趴儿瑞赖哦)</h5>
+<p>Parallel Old 收集器是Parallel Scavenge的年老代版本，使用多线程的标记-整理算法</p>
+<h5 id="6cms-收集器多线程标记清除算法">6.CMS 收集器（多线程标记清除算法）</h5>
+<p>Concurrent mark sweep(CMS)收集器是一种年老代垃圾收集器，其最主要目标是获取最短垃圾回收停顿时间，和其他年老代使用标记-整理算法不同，它使用多线程的标记-清除算法。</p>
+<p>最短的垃圾收集停顿时间可以为交互比较高的程序提高用户体验。</p>
+<h4 id="整个堆">整个堆</h4>
+<h5 id="7g1-收集器">7.G1 收集器</h5>
+<p>Garbage first 垃圾收集器是目前垃圾收集器理论发展的最前沿成果，相比与 CMS 收集器，G1 收集器两个最突出的改进是：</p>
+<p>1.基于标记-整理算法，不产生内存碎片。</p>
+<p>2.可以非常精确控制停顿时间，在不牺牲吞吐量前提下，实现低停顿垃圾回收。</p>
+<p>G1 收集器避免全区域垃圾收集，它把堆内存划分为大小固定的几个独立区域，并且跟踪这些区域的垃圾收集进度，同时在后台维护一个优先级列表，每次根据所允许的收集时间，优先回收垃圾最多的区域。区域划分和优先级区域回收机制，确保 G1 收集器可以在有限时间获得最高的垃圾收集效率。</p>
+<h3 id="垃圾回收算法">垃圾回收算法</h3>
+<p>标记清除算法 mark-sweep</p>
+<p>复制算法 coying -&gt;新生代</p>
+<p>标记整理算法 mark-compat -&gt;老年代</p>
+<p>分代收集算法 Generational Collection -&gt;新生代使用复制算法,老年代使用标记整理算法</p>
+<h3 id="jvm调优">JVM调优</h3>
+<p>使用jvm调优工具观察内存情况,针对不同的情况进行相应的处理</p>
+<h4 id="调优工具">调优工具</h4>
+<h5 id="jconsolejprofilevisualvm">Jconsole，jProfile，VisualVM</h5>
+<p>Jconsole : jdk自带，功能简单，但是可以在系统有一定负荷的情况下使用。对垃圾回收算法有很详细的跟踪</p>
+<p>JProfiler：商业软件，需要付费。功能强大。</p>
+<p>VisualVM：JDK自带，功能强大，与JProfiler类似。推荐。</p>
+<h5 id="如果是内存泄漏">如果是内存泄漏</h5>
+<p>老年代被占满:根据垃圾回收前后情况对比，同时根据对象引用情况（常见的集合对象引用）分析，基本都可以找到泄漏点。</p>
+<p>持久代被占满:调整-XX:MaxPermSize 大小</p>
+<h3 id="jvm参数">JVM参数</h3>
+<p>-Xms / -Xmx — 堆的初始大小 / 堆的最大大小</p>
+<p>-Xmn — 堆中年轻代的大小</p>
+<p>-XX:-DisableExplicitGC — 让 System.gc()不产生任何作用</p>
+<p>-XX:+PrintGCDetails — 打印 GC 的细节</p>
+<p>-XX:+PrintGCDateStamps — 打印 GC 操作的时间戳</p>
+<p>-XX:NewSize / XX:MaxNewSize — 设置新生代大小/新生代最大大小</p>
+<p>-XX:NewRatio — 可以设置老生代和新生代的比例</p>
+<p>-XX:PrintTenuringDistribution — 设置每次新生代 GC 后输出幸存者乐园中对象年龄的分布</p>
+<p>-XX:InitialTenuringThreshold / -XX:MaxTenuringThreshold：设置老年代阀值的初始值和最大值</p>
+<p>-XX:TargetSurvivorRatio：设置幸存区的目标使用率</p>
+<h3 id="谈一谈对jmm的理解-java-内存模型">谈一谈对JMM的理解 (<strong>Java</strong> 内存模型)</h3>
+<p>它描述的是一组规则或规范，通过这组 规范定义了程序中各个变量(包括实例字段，静态字段和构成数组对象的元素)的访问方式。</p>
+<p>在Java 内存模型下，线程可以把变量保存本地内存（⽐如机器的寄存器）中，⽽不是直接在主存中进⾏读写。这就可能造成⼀个线程在主存中修改了⼀个变量的值，⽽另外⼀个线程还继续使⽤它在寄存器中的变量值的拷⻉，造成数据的不⼀致,要解决这个问题，就需要把变量声明为 volatile,</p>
+<p>volatile 关键字 除了防⽌ JVM 的指令重排 ，还有⼀个重要的作⽤就是保证变量的可⻅性。</p>
+<h3 id="一些概念">一些概念</h3>
+<p>TPS是指系统在单位时间内处理事务的数量</p>
+<p>QPS每秒查询率</p>
+<p>响应时间(RT)响应时间是指系统对请求作出响应的时间</p>
+<p>并发数： 系统同时处理的request/事务数</p>
+<h2 id="java基础">java基础</h2>
+<h3 id="基本数据类型">基本数据类型</h3>
+<p>byte  1字节</p>
+<p>short 2字节</p>
+<p>char 2字节</p>
+<p>int   4字节</p>
+<p>float  4字节</p>
+<p>long  8字节</p>
+<p>double  8字节</p>
+<p>boolean</p>
+<h3 id="接口和抽象类的区别">接口和抽象类的区别</h3>
+<p>抽象类可以存在普通成员函数，而接口中只能存在public abstract 方法。</p>
+<p>抽象类中的成员变量可以是各种类型的，而接口中的成员变量只能是public static final类型的。</p>
+<p>抽象类只能继承一个，接口可以实现多个。</p>
+<p>接口的设计目的，是对类的行为进行约束,以强制要求不同的类具有相同的行为。它只约束了行为的有无，但不对如何实现行为进行限制。</p>
+<p>抽象类的设计目的，是代码复用。当不同的类具有某些相同的行为(记为行为集合A)，且其中一部分行为的实现方式一致时（A的非真子集，记为B），可以让这些类都派生于一个抽象类</p>
+<h3 id="hashmap的底层数据结构和原理">HashMap的底层数据结构和原理</h3>
+<h5 id="数据结构">数据结构</h5>
+<p>数组 链表 红黑树</p>
+<p>HashMap的主干是一个Entry数组。Entry是HashMap的基本组成单元，每一个Entry包含一个key-value键值对。</p>
+<h5 id="存储原理">存储原理</h5>
+<p>计算key的hash值，二次hash然后对数组长度取模，对应到数组下标，</p>
+<p>如果没有产生hash冲突(下标位置没有元素)，则直接创建Node存入数组，</p>
+<p>如果产生hash冲突，先进行equal比较，相同则取代该元素，不同，则判断链表高度插入链表，链表高度达到8，并且数组长度到64则转变为红黑树，长度低于6则将红黑树转回链表</p>
+<p>key为null，存在下标0的位置</p>
+<h3 id="hashmap是怎么解决hash碰撞的">HashMap是怎么解决hash碰撞的</h3>
+<p>碰撞：HashMap运用put方法存储多个元素时，计算得出相同的hashCode，在put时出现冲突。</p>
+<p><strong>处理</strong>：利用“拉链法”处理HashCode的碰撞问题；当我们将键值对传递给put方法时，他调用键对象的hashCode()方法来计算hashCode，然后找到bucket（哈希桶）位置来存储对象；当用get方法获取对象时，通过键对象的equals()方法找到正确的键值对，然后返回值对象。HashMap使用链表来解决碰撞问题，当碰撞发生了，对象将会存储在链表的下一个节点中。hashMap在每个链表节点存储键值对对象。当两个不同的键却有相同的hashCode时，他们会存储在同一个bucket位置的链表中。键对象的equals()来找到键值对。</p>
+<h3 id="扩容的触发条件">扩容的触发条件</h3>
+<p>阈值 = 数组默认的长度 x 负载因子（阈值=16x0.75=12)</p>
+<p>扩容2倍</p>
+<h3 id="在使用-hashmap-的时候用-string-做-key-有什么好处">在使用 HashMap 的时候，用 String 做 key 有什么好处？</h3>
+<p>HashMap 内部实现是通过 key 的 hashcode 来确定 value 的存储位置，因为字符串是不可变的，所以当创建字符串时，它的 hashcode 被缓存下来，不需要再次计算，所以相比于其他对象更快。</p>
+<h3 id="hashmap和concurrenthashmap的区别">Hashmap和ConcurrentHashMap的区别</h3>
+<p>hashmap不安全  ConcurrentHashMap 安全</p>
+<h3 id="concurrenthashmap在17-和18区别">ConcurrentHashMap在1.7 和1.8区别</h3>
+<h4 id="jdk17">JDK1.7</h4>
+<p>数据结构: ReentrantLock+Segment+HashEntry，一个Segment中包含一个HashEntry数组，每个HashEntry又是一个链表结构</p>
+<p>元素查询: 二次hash ,第一次定位到segment,第二次定位到元素所在的链表的头部锁;</p>
+<p>segment分段锁 ,segment继承了ReentranLock,锁定操作的segment,其他的segment不受影响,并发度为segment的个数.可以通过构造函数指定.数组扩容不会影响其他的segment.</p>
+<h4 id="jdk18">JDK1.8</h4>
+<p>数据结构：synchronized+CAS+Node+红黑树。Node的val和next都用volatile修饰，保证可见性查找，替换，赋值操作都使用CAS</p>
+<p>2.<strong>保证线程安全机制</strong>：JDK1.7采用segment的分段锁机制实现线程安全，其中segment继承自ReentrantLock。JDK1.8采用CAS+Synchronized保证线程安全。</p>
+<p>3.<strong>锁的粒度</strong>：原来是对需要进行数据操作的Segment加锁，现调整为对每个数组元素加锁（Node) 锁粒度更细，效率更高，扩容时，阻塞所有的读写操作、并发扩容</p>
+<p>4.<strong>链表转化为红黑树</strong>:定位结点的hash算法简化会带来弊端,Hash冲突加剧,因此在链表节点数量大于8时，会将链表转化为红黑树进行存储。</p>
+<p>5.<strong>查询时间复杂度</strong>：从原来的遍历链表O(n)，变成遍历红黑树O(logN)。</p>
+<h3 id="hashmap和hashtable的区别">HashMap和HashTable的区别</h3>
+<p>a) Hashtable 是 JDK 1 遗留下来的类，而 HashMap 是后来增加的。</p>
+<p>b）Hashtable 是同步的，比较慢，但 HashMap 没有同步策略，所以会更快。</p>
+<p>c）Hashtable 不允许有个空的 key，但是 HashMap 允许出现一个 null key。</p>
+<h3 id="谈一谈threadlocal">谈一谈Threadlocal</h3>
+<p>ThreadLocal 类主要解决的就是让每个线程绑定⾃⼰的值，可以将 ThreadLocal 类形象的⽐喻成存放数据的盒⼦，盒⼦中可以存储每个线程的私有数据。</p>
+<p>如果你创建了⼀个 ThreadLocal 变量，那么访问这个变量的每个线程都会有这个变量的本地副本，这也是 ThreadLocal 变量名的由来。他们可以使⽤ get 和 set ⽅法来获取默认值或将其值更改为当前线程所存的副本的值，从⽽避免了线程安全问题。</p>
+<h3 id="threadlocal的数据结构">Threadlocal的数据结构</h3>
+<p><strong>ThreadLocal</strong> 内部维护的是⼀个类似 <strong>Map</strong> 的 <strong>ThreadLocalMap</strong> 数据结构， <strong>key</strong> 为当前对象的 <strong>Thread</strong> 对象，值为 <strong>Object</strong> 对象。</p>
+<h3 id="string为什么用final修饰">String为什么用final修饰</h3>
+<p>String类不能被继承，所以就不会被修改</p>
+<p>String类在程序中出现的频率比较高，如果为了避免安全隐患，在它每次出现时都用final来修饰，这无疑会降低程序的执行效率，所以干脆直接将其设为final一提高效率</p>
+<h3 id="arraylistlinkedlistvoctor的区别">ArrayList,linkedList,voctor的区别</h3>
+<h4 id="区别">区别</h4>
+<p>ArrayList和Vector是基于数组实现的，LinkedList是基于双向链表实现的（含有头结点）。</p>
+<p>ArrayList和Vector是按照顺序将元素存储（从下表为0开始），删除元素时，删除操作完成后，需要使部分元素移位，默认的初始容量都是10.</p>
+<h4 id="线程安全性">线程安全性</h4>
+<p>ArrayList不具有有线程安全性，在单线程的环境中，LinkedList也是线程不安全的，如果在并发环境下使用它们，可以用Collections类中的静态方法synchronizedList(）对ArrayList和LinkedList进行调用即可。</p>
+<p>Vector实现线程安全的，即它大部分的方法都包含关键字synchronized,但是Vector的效率没有ArraykList和LinkedList高。</p>
+<h4 id="增删改查的效率">增删改查的效率</h4>
+<p>ArrrayList 底层的数据结构是数组，支持随机访问， 查询快，插入和删除慢</p>
+<p>LinkedList 的底层数据结构书链表，不支持随机访问。查询慢，插入和删除快</p>
+<h3 id="幂等性">幂等性</h3>
+<p>就是用户对于同一操作发起的一次请求或者多次请求的结果是一致的，不会因为多次点击而产生了副作用</p>
+<h3 id="string-stringbuffer-stringbuilder的区别">String StringBuffer StringBuilder的区别</h3>
+<p>他们都可以存储字符串</p>
+<p>String是只读字符串.不能被修改</p>
+<p>StringBuffer 线程安全</p>
+<p>StringBuilder线程不安全</p>
+<h3 id="i和i的区别">++i和i++的区别</h3>
+<p>++ i 是先加后赋值；i ++ 是先赋值后加</p>
+<h3 id="如果保证i和i线程安全">如果保证i++和++i线程安全</h3>
+<p>使用atomic --&gt; AtomicInteger a = new AtomicInteger(0);</p>
+<h3 id="红黑树">红黑树</h3>
+<h5 id="红黑树的特性">红黑树的特性:</h5>
+<p>(1) 每个节点或者是黑色，或者是红色。</p>
+<p>(2) 根节点是黑色。</p>
+<p>(3) 每个叶子节点是黑色。 [注意：这里叶子节点，是指为空的叶子节点！]</p>
+<p>(4) 如果一个节点是红色的，则它的子节点必须是黑色的。</p>
+<p>(5) 从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点。</p>
+<h3 id="java-和-mysql中货币使用的变量">Java 和 mysql中货币使用的变量</h3>
+<p>Java中如何使用货币类型:使用BigDecimal类:</p>
+<p>mysql中如何使用货币类型:decimal(P,D);</p>
+<p>P是表示有效数字数的精度。 P范围为1〜65。</p>
+<p>D是表示小数点后的位数。 D的范围是0~30。MySQL要求D小于或等于(&lt;=)P。</p>
+<h2 id="spring">Spring</h2>
+<h3 id="什么是iocioc运用了什么模式">什么是IOC,IOC运用了什么模式</h3>
+<p>控制反转也叫依赖注入。利用了工厂模式将对象交给容器管理，你只需要在spring配置文件总配置相应的bean，以及设置相关的属性，让spring容器来生成类的实例对象以及管理对象。在spring容器启动的时候，spring会把你在配置文件中配置的bean都初始化好，然后在你需要调用的时候，就把它已经初始化好的那些bean分配给你需要调用这些bean的类（假设这个类名是A），分配的方法就是调用A的setter方法来注入，而不需要你在A里面new这些bean了</p>
+<p>IOC就是典型的工厂模式，通过sessionfactory去注入实例。</p>
+<h3 id="什么是aopaop的实现方式">什么是AOP,AOP的实现方式</h3>
+<p>AOP就是典型的代理模式的体现.</p>
+<p>面向切面编程。（Aspect-Oriented Programming） AOP可以说是对OOP的补充和完善。OOP引入封装、继承和多态性等概念来建立一种对象层次结构，用以模拟公共行为的一个集合。当我们需要为分散的对象引入公共行为的时候，OOP则显得无能为力。也就是说，OOP允许你定义从上到下的关系，但并不适合定义从左到右的关系。例如日志功能。日志代码往往水平地散布在所有对象层次中，而与它所散布到的对象的核心功能毫无关系。在OOP设计中，它导致了大量代码的重复，而不利于各个模块的重用。将程序中的交叉业务逻辑（比如安全，日志，事务等），封装成一个切面，然后注入到目标对象（具体业务逻辑）中去。</p>
+<p>实现AOP的技术，主要分为两大类：一是采用动态代理技术，利用截取消息的方式，对该消息进行装饰，以取代原有对象行为的执行；二是采用静态织入的方式，引入特定的语法创建“方面”，从而使得编译器可以在编译期间织入有关“方面”的代码.</p>
+<p>cglab 和jdk</p>
+<h2 id="springboot">springBoot</h2>
+<h3 id="什么是springboot">什么是SpringBoot</h3>
+<p>SpringBoot是一个构建在Spring框架顶部的项目。它提供了一个更简单、更快捷的方法来设置、配置和运行简单和基于web的应用程序。</p>
+<h3 id="springboot和springcloud的区别">SpringBoot和SpringCloud的区别</h3>
+<p>SpringBoot专注于快速方便的开发单个个体微服务。</p>
+<p>SpringCloud是关注全局的微服务协调整理治理框架，它将SpringBoot开发的一个个单体微服务整合并管理起来,为各个微服务之间提供，配置管理、服务发现、断路器、路由、微代理、事件总线、全局锁、决策竞选、分布式会话等等集成服务</p>
+<p>SpringBoot可以离开SpringCloud独立使用开发项目， 但是SpringCloud离不开SpringBoot ，属于依赖的关系.</p>
+<p>SpringBoot专注于快速、方便的开发单个微服务个体，SpringCloud关注全局的服务治理框架。</p>
+<h3 id="springboot是怎么加载配置的">SpringBoot是怎么加载配置的</h3>
+<p>1、@EnableAutoConfiguration这个注解会&quot;猜&quot;你将如何配置spring，前提是你已经添加了jar依赖项，如果spring-boot-starter-web已经添加Tomcat和SpringMVC，这个注释就会自动假设您在开发一个web应用程序并添加相应的spring配置，会自动去maven中读取每个starter中的spring.factories文件，该文件里配置了所有需要被创建spring容器中bean</p>
+<p>2、在main方法中加上@SpringBootApplication和@EnableAutoConfiguration</p>
+<h3 id="springboot的核心注解">SpringBoot的核心注解</h3>
+<p>启动类上的**@SpringBootApplication**是核心注解.主要包含以下几个</p>
+<p>@SpringBootConfifiguration** 组合了 @Confifiguration 注解，实现配置文件的功能</p>
+<p>@EnableAutoConfifiguration**打开自动配置的功能，也可以关闭某个自动配置的选项，如关闭数据源</p>
+<p>自动配置功能： @SpringBootApplication(exclude = { DataSourceAutoConfifiguration.class })。</p>
+<p>@ComponentScan** Spring组件扫描。</p>
+<h3 id="springboot的运行方式">SpringBoot的运行方式</h3>
+<p>打包用命令或者放到容器中运行</p>
+<p>直接执行 main 方法运行</p>
+<p>用 Maven/Gradle 插件运行</p>
+<h3 id="spring-boot-spring-mvc-和-spring-有什么区别">Spring Boot、Spring MVC <strong>和</strong> <strong>Spring</strong> 有什么区别？</h3>
+<h4 id="spring-2">Spring</h4>
+<p>Spring最重要的特征是依赖注入。所有 SpringModules 不是依赖注入就是 IOC 控制反转。</p>
+<p>当我们恰当的使用 DI 或者是 IOC 的时候，我们可以开发松耦合应用。松耦合应用的单元测试可以很容易的进行。</p>
+<h4 id="spring-mvc">Spring MVC</h4>
+<p>Spring MVC 提供了一种分离式的方法来开发 Web 应用。通过运用像 DispatcherServelet，</p>
+<p>MoudlAndView 和 ViewResolver 等一些简单的概念，开发 Web 应用将会变的非常简单。</p>
+<h4 id="springboot-2">springBoot</h4>
+<p>Spring 和 SpringMVC 的问题在于需要配置大量的参数。</p>
+<p>Spring Boot 通过一个自动配置和启动的项来目解决这个问题。为了更快的构建产品就绪应用程序，</p>
+<p>Spring Boot 提供了一些非功能性特征。</p>
+<h3 id="在spring-boot启动的时候运行一些特定的代码监听观察者模式">在Spring Boot启动的时候运行一些特定的代码？(监听)(观察者模式)</h3>
+<p>实现接口ApplicationRunner或CommandLineRunner，这两个接口实现方式一样，它们都只提供了一个run方法。</p>
+<p>CommandLineRunner：启动获取命令行参数</p>
+<h2 id="springcloud">springCloud</h2>
+<h3 id="springcloud的组件">springCloud的组件</h3>
+<h4 id="服务发现netflix-eureka">服务发现——Netflix Eureka</h4>
+<p>由两个组件组成：Eureka服务器和Eureka客户端。Eureka服务器用作服务注册服务器。Eureka客户端是一个java客户端</p>
+<h4 id="声明式的web-service客户端fegin"><strong>声明式的web service客户端——Fegin</strong></h4>
+<p>基于动态代理机制，根据注解和选择的机器，拼接请求 url 地址，发起请求。</p>
+<p>使用feign之后，我们调用eureka 注册的其他服务，在代码中就像各个service之间相互调用那么简单,feign底层是使用了ribbon作为负载均衡的客户端，而ribbon的负载均衡也是依赖于eureka 获得各个服务的地址</p>
+<h4 id="服务网关netflix-zuul">服务网关——Netflix Zuul</h4>
+<p>网关管理，由 Zuul 网关转发请求给对应的服务,,反向代理的功能</p>
+<h4 id="分布式配置spring-cloud-config">分布式配置——Spring Cloud Config</h4>
+<h5 id="springcloudconfig原理">SpringCloudConfig原理</h5>
+<p>支持将配置集中存放在一个GIT仓库里,然后通过配置中心服务端(config server)来管理所有的配置文件.</p>
+<p>一个实例实例修改配置文件修改后,提交到git,其他服务实例通过配置中心从git服务端获取配置信息</p>
+<p>对于配置中心来说,每个实例就相当于 config client</p>
+<h4 id="断路器netflix-hystrix">断路器——Netflix Hystrix</h4>
+<p>断路器可以防止一个应用程序多次试图执行一个操作，即很可能失败，允许它继续而不等待故障恢复或者浪费 CPU 周期，而它确定该故障是持久的。断路器模式也使应用程序能够检测故障是否已经解决。如果问题似乎已经得到纠正，应用程序可以尝试调用操作。</p>
+<h4 id="客服端负载均衡netflix-ribbon">客服端负载均衡——Netflix Ribbon</h4>
+<p>Ribbon，主要提供客户侧的软件负载均衡算法。</p>
+<h3 id="springcloud的分布式链路监控">Springcloud的分布式链路监控</h3>
+<h4 id="sleuthzipkin">sleuth+Zipkin</h4>
+<h3 id="什么是熔断什么事服务降级">什么是熔断,什么事服务降级</h3>
+<p>熔断机制是应对雪崩效应的一种微服务链路保护机制。当某个微服务不可用或者响应时间太长时，会进行服务降级，进而熔断该节点微服务的调用，快速返回“错误”的响应信息。当检测到该节点微服务调用响应正常后恢复调用链路。</p>
+<p>在SpringCloud框架里熔断机制通过Hystrix实现，Hystrix会监控微服务间调用的状况，当失败的调用到一定阈值，缺省是5秒内调用20次，如果失败，就会启动熔断机制。</p>
+<p>服务降级，一般是从整体负荷考虑。就是当某个服务熔断之后，服务器将不再被调用，此时客户端可以自己准备一个本地的fallback回调，返回一个缺省值。这样做，虽然水平下降，但好歹可用，比直接挂掉强。</p>
+<h5 id="hystrix相关注解"><strong>Hystrix</strong>相关注解</h5>
+<p>@EnableHystrix：开启熔断</p>
+<p>@HystrixCommand(fallbackMethod=”XXX”)：声明一个失败回滚处理函数XXX，当被注解的方法执行超时（默认是1000毫秒），就会执行fallback函数，返回错误提示。</p>
+<h2 id="mysql">MySql</h2>
+<h3 id="事务的隔离级别">事务的隔离级别</h3>
+<p>READ-UNCOMMITTED  允许脏读   允许不可重复读  允许幻读</p>
+<p>READ-COMMITTED 不允许脏读   允许不可重复读  允许幻读</p>
+<p>REPEATABLE-READ 不允许脏读   不允许不可重复读  允许幻读</p>
+<p>SERIALIZABLE  不允许脏读   不允许不可重复读  不允许幻读</p>
+<h3 id="如何避免脏读幻读不可重复读">如何避免脏读,幻读,不可重复读</h3>
+<p>1 <strong>脏读(一个事务读取到了另外一个事务没有提交的数据)</strong>：修改时加排他锁，直到事务提交后才释放，读取时加共享锁，读取完释放事务1读取数据时加上共享锁后（这 样在事务1读取数据的过程中，其他事务就不会修改该数据），不允许任何事物操作该数据，只能读取，之后1如果有更新操作，那么会转换为排他锁，其他事务更 无权参与进来读写，这样就防止了脏读问题。但是当事务1读取数据过程中，有可能其他事务也读取了该数据，读取完毕后共享锁释放，此时事务1修改数据，修改 完毕提交事务，其他事务再次读取数据时候发现数据不一致，就会出现不可重复读问题，所以这样不能够避免不可重复读问题。</p>
+<p>2 <strong>不可重复读(在同一事务中，两次读取同一数据，得到内容不同)</strong>：读取数据时加共享锁，写数据时加排他锁，都是事务提交才释放锁。读取时候不允许其他事物修改该数据，不管数据在事务过程中读取多少次，数据都是一致的，避免了不可重复读问题</p>
+<p>3 <strong>幻读(同一事务中，用同样的操作读取两次，得到的记录数不相同)</strong>：采用的是范围锁RangeS RangeS_S模式，锁定检索范围为只读，这样就避免了幻影读问题，在这里有个描述范围锁的文章</p>
+<h3 id="索引类型">索引类型</h3>
+<p>普通索引:允许被索引的数据列包含重复的值。</p>
+<p>唯一索引:可以保证数据记录的唯一性。</p>
+<p>主键:是一种特殊的唯一索引，在一张表中只能定义一个主键索引，主键用于唯一标识一条记录，使用 关键字 PRIMARY KEY 来创建。</p>
+<p>联合索引:索引可以覆盖多个数据列，如像INDEX(columnA, columnB)索引。</p>
+<p>全文索引:通过建立 倒排索引 ,可以极大的提升检索效率,解决判断字段是否包含的问题，是目前搜索引</p>
+<p>擎使用的一种关键技术。可以通过ALTER TABLE table_name ADD FULLTEXT (column);创建全文索引</p>
+<p>索引可以极大的提高数据的查询速度。 通过使用索引，可以在查询的过程中，使用优化隐藏器，提高系统的性能。 但是会降低插入、删除、更新表的速度，因为在执行这些写操作时，还要操作索引文件</p>
+<p>索引需要占物理空间，除了数据表占数据空间之外，每一个索引还要占一定的物理空间，如果要建立聚 簇索引，那么需要的空间就会更大，如果非聚集索引很多，一旦聚集索引改变，那么所有非聚集索引都 会跟着变。</p>
+<h3 id="主键索引和唯一索引的区别">主键索引和唯一索引的区别</h3>
+<p>主键是一种约束，唯一索引是一种索引，两者在本质上是不同的。</p>
+<p>主键创建后一定包含一个唯一性索引，唯一性索引并不一定就是主键。</p>
+<p>唯一性索引列允许空值，而主键列不允许为空值。</p>
+<p>主键列在创建时，已经默认不为空值 + 唯一索引了。</p>
+<p>主键可以被其他表引用为外键，而唯一索引不能。</p>
+<p>一个表最多只能创建一个主键，但可以创建多个唯一索引。</p>
+<h3 id="索引的数据类型">索引的数据类型</h3>
+<p>Hash索引和B+ Tree索引，InnoDB引擎，默认的是B+Tree</p>
+<h3 id="btree的理解">B+tree的理解</h3>
+<p>B+树是一个平衡的多叉树，从根节点到每个叶子节点的高度差值不超过1，而且同层级的节点间有指针相互链接。在B+树上的常规检索，从根节点到叶子节点的搜索效率基本相当，不会出现大幅波动，而且基于索引的顺序扫描时，也可以利用双向指针快速左右移动，效率非常高。因此，B+树索引被广泛应用于数据库、文件系统等场景。</p>
+<h3 id="mysql聚簇和非聚簇索引的区别">mysql聚簇和非聚簇索引的区别</h3>
+<p>都是B+树的数据结构</p>
+<p>聚簇索引：将数据存储与索引放到了一块、并且是按照一定的顺序组织的，找到索引也就找到了数据，数据的物理存放顺序与索引顺序是一致的，即：只要索引是相邻的，那么对应的数据一定也是相邻地存放在磁盘上的</p>
+<p>非聚簇索引：叶子节点不存储数据、存储的是数据行地址，也就是说根据索引查找到数据行的位置再取磁盘查找数据，这个就有点类似一本树的目录，比如我们要找第三章第一节，那我们先在这个目录里面找，找到对应的页码后再去对应的页码看文章。</p>
+<h3 id="sql优化">SQL优化</h3>
+<p>1、Where 子句中：where 表之间的连接必须写在其他 Where 条件之前，那些可以过滤掉最大数量记录的条件必须写在 Where 子句的末尾.HAVING 最后。</p>
+<p>2、用 EXISTS 替代 IN、用 NOT EXISTS 替代 NOT IN。 3、 避免在索引列上使用计算</p>
+<p>4、避免在索引列上使用 IS NULL 和 IS NOT NULL</p>
+<p>5、对查询进行优化，应尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。</p>
+<p>6、应尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃使用索引而进行全表扫描</p>
+<p>7、应尽量避免在 where 子句中对字段进行表达式操作，这将导致引擎放弃使用索引而进行全表扫描</p>
+<p>8、避免在 where 子句中使用 or 来连接条件，否则将导致引擎放弃使用索引而进行全表扫描</p>
+<h3 id="hash索引和b-tree索引优缺点"><strong>Hash索引和B+ Tree索引优缺点</strong></h3>
+<p>哈希索引适合等值查询，但是无法进行范围查询</p>
+<p>哈希索引没办法利用索引完成排序</p>
+<p>哈希索引不支持多列联合索引的最左匹配规则</p>
+<p>如果有大量重复键值的情况下，哈希索引的效率会很低，因为存在哈希碰撞问题</p>
+<h3 id="sql注入">sql注入</h3>
+<h4 id="产生的原因">产生的原因</h4>
+<p>程序开发过程中不注意规范书写 sql 语句和对特殊字符进行过滤，导致客户端可以通过全局变量 POST 和 GET 提交一些 sql 语句正常执行。</p>
+<h4 id="解决方案">解决方案</h4>
+<p>Sql 语句书写尽量不要省略双引号和单引号</p>
+<p>不建议直接拼接字符串，建议使用占位符赋值。</p>
+<h2 id="redis">Redis</h2>
+<h3 id="redis的数据类型-8种">Redis的数据类型 8种</h3>
+<h4 id="redis-支持五种数据类型">Redis 支持五种数据类型：</h4>
+<p>string（字符串），hash（哈希），list（列表），set（集合）及 zsetsorted set：有序集合)。</p>
+<h4 id="三种高级类型">三种高级类型</h4>
+<p>HyperLogLog(用来做基数统计)、Geo(用户给定的地理位置信息储存)、Pub/Sub(消息的“发布”和“订阅”的基本能力)。</p>
+<h3 id="redis的淘汰策略">Redis的淘汰策略</h3>
+<p>volatile-lru：从已设置过期时间的数据集（server. db[i]. expires）中挑选最近最少使用的数据淘汰。</p>
+<p>volatile-ttl：从已设置过期时间的数据集（server. db[i]. expires）中挑选将要过期的数据淘汰。</p>
+<p>volatile-random：从已设置过期时间的数据集（server. db[i]. expires）中任意选择数据淘汰。</p>
+<p>allkeys-lru：从数据集（server. db[i]. dict）中挑选最近最少使用的数据淘汰。</p>
+<p>allkeys-random：从数据集（server. db[i]. dict）中任意选择数据淘汰。</p>
+<p>no-enviction（驱逐）：禁止驱逐数据。</p>
+<h3 id="缓存雪崩是什么怎么解决">缓存雪崩是什么,怎么解决</h3>
+<p>我们可以简单的理解为：由于原有缓存失效，新缓存未到期间(例如：我们设置缓存时采用了相同的过期时间，在同一时刻出现大面积的缓存过期)，所有原本应该访问缓存的请求都去查询数据库了，而对数据库CPU和内存造成巨大压力，严重的会造成数据库宕机。从而形成一系列连锁反应，造成整个系统崩溃。</p>
+<h5 id="解决办法">解决办法：</h5>
+<p>大多数系统设计者考虑用加锁（ 最多的解决方案）或者队列的方式保证来保证不会有大量的线程对数据库一次性进行读写，从而避免失效时大量的并发请求落到底层存储系统上。还有一个简单方案就时讲缓存失效时间分散开。</p>
+<h3 id="缓存穿透是什么怎么解决">缓存穿透是什么,怎么解决</h3>
+<p>缓存穿透是指用户查询数据，在数据库没有，自然在缓存中也不会有。这样就导致用户查询的时候，在缓存中找不到，每次都要去数据库再查询一遍，然后返回空（相当于进行了两次无用的查询）。这样请求就绕过缓存直接查数据库，这也是经常提的缓存命中率问题。</p>
+<h5 id="解决办法-2">解决办法：</h5>
+<p>最常见的则是采用<strong>布隆过滤器</strong>，将所有可能存在的数据哈希到一个足够大的bitmap中，一个一定不存在的数据会被这个bitmap拦截掉，从而避免了对底层存储系统的查询压力。</p>
+<p>另外也有一个更为<strong>简单粗暴的方法</strong>，如果一个查询返回的数据为空（不管是数据不存在，还是系统故障），我们仍然把这个空结果进行缓存，但它的过期时间会很短，最长不超过五分钟。通过这个直接设置的默认值存放到缓存，这样第二次到缓冲中获取就有值了，而不会继续访问数据库，这种办法最简单粗暴。</p>
+<h3 id="redis-怎么实现分布式锁">Redis 怎么实现分布式锁</h3>
+<p>Redis 分布式锁其实就是在系统里面占一个“坑”，其他程序也要占“坑”的时候，占用成功了就可以继续执行，失败了就只能放弃或稍后重试。</p>
+<p>占坑一般使用 setnx(set if not exists)指令，只允许被一个程序占有，使用完调用 del 释放锁。</p>
+<p>使用redisson</p>
+<figure data-type="image" tabindex="2"><img src="https://muyang24.github.io/post-images/1658738272585.png" alt="" loading="lazy"></figure>
+<h3 id="redis的好处">Redis的好处</h3>
+<p>速度快，因为数据存在内存中</p>
+<p>支持丰富数据类型，支持 string，list，set，Zset，hash 等</p>
+<p>支持事务，操作都是原子性，所谓的原子性就是对数据的更改要么全部执行，要么全部不执行</p>
+<p>丰富的特性：可用于缓存，消息，按 key 设置过期时间，过期后将会自动删除</p>
+<h3 id="redis的持久化机制">Redis的持久化机制</h3>
+<p>Redis 提供两种持久化机制 RDB 和 AOF 机制:</p>
+<p>RDB（Redis Database）：指定的时间间隔能对你的数据进行快照存储。缺点：耗时，耗性能(fork+io 操作)，易丢失数据(<strong>默认开启</strong>)</p>
+<p>AOF（Append Only File）：每一个收到的写命令都通过write函数追加到文件中。缺点：体积大，恢复速度慢</p>
+<h3 id="redis-有哪些功能">redis 有哪些功能？</h3>
+<p>数据缓存功能</p>
+<p>分布式锁的功能</p>
+<p>支持数据持久化</p>
+<p>支持事务</p>
+<p>支持消息队列</p>
+<h3 id="怎么保证缓存和数据库数据的一致性">怎么保证缓存和数据库数据的一致性</h3>
+<p>合理设置缓存的过期时间。</p>
+<p>新增、更改、删除数据库操作时同步更新 Redis，可以使用事物机制来保证数据的一致性。</p>
+<h3 id="springboot封装redis">springboot封装redis</h3>
+<p>redisTemplate.opsForValue(); //操作字符串</p>
+<p>redisTemplate.opsForList(); //操作列表</p>
+<p>redisTemplate.opsForSet(); //操作集合</p>
+<p>redisTemplate.opsForHash(); //操作散列</p>
+<p>redisTemplate.opsForZSet(); //操作有序集合</p>
+<h3 id="redis有哪些架构模式讲讲其特点">Redis有哪些架构模式？讲讲其特点</h3>
+<h4 id="单机版">单机版</h4>
+<p>特点：简单，问题：内存容量有限、处理能力有限、无法高可用</p>
+<h4 id="主从复制">主从复制</h4>
+<p>其允许用户根据一个Redis服务器来创建任意多个该服务器的复制品，主服务器为master，其他的为slave。主服务器会一直将发生在自己身上的数据更新同步给从服务器，从而一直保证主从服务器的数据相同。特点：降低主服务器的读压力。问题：无法实现高可用，没有解决master写的压力。</p>
+<h4 id="哨兵">哨兵</h4>
+<p>哨兵是一个分布式系统中监控redis主从服务器，并在主服务器下线时自动进行故障转移。</p>
+<p>哨兵其特性：监控：Sentinel会不断地检查你的主服务器和从服务器是否正常运转 提醒：当被监控的某个Redis服务器出现问题时，Sentinel可以通过API向管理员或者其他应用程序发送通知自动故障迁移：当一个主服务器不能正常工作时，Sentinel会开始一次自动故障迁移操作。</p>
+<p>哨兵特点：保证高可用，监控各个结点，自动故障迁移。缺点：主从模式，切换需要时间会丢失数据，没有解决master的写压力。</p>
+<h4 id="集群proxy型">集群（proxy型)：</h4>
+<p>集群优点：1.多种hash算法：MD5、CRC16、CRC32、CRC32a、hsieh、murmur、Jenkins 2.支持失败节点自动删除.3.后端sharing分片逻辑对业务透明，业务方的读写操作和操作单个Redis一致</p>
+<p>集群缺点：增加了新的proxy，需要维护其高可用</p>
+<h4 id="集群直连型">集群（直连型）：</h4>
+<p>优点：1. 无中心结构，缓解了Redis的写压力 2.数据按照 slot 存储分布在多个节点，节点间数据共享，可动态调整数据分布3.可扩展，可线性扩展到1000个节点，节点可动态添加或删除4.高可用，部分节点不可用时，集群仍可用5.实现故障自动failover，节点之间通过gossip协议交换状态信息，用投票机制完成slave到master的角色升级</p>
+<p>缺点：资源隔离性较差，容易出现互相影响的情况；数据通过异步复制，不保证数据的强一致性。</p>
+<h3 id="redis的集群模式是如何实现">redis的集群模式是如何实现</h3>
+<p>redis-cluster 分片原理：Cluster 中有一个 16384 长度的槽(虚拟槽)，编号分别为 0-16383。每个 Master 节点都会负责一部分的槽，当有某个 key 被映射到某个 Master 负责的槽，那么这个 Master 负责为这个 key 提供服务，至于哪个 Master 节点负责哪个槽，可以由用户指定，也可以在初始化的时候自动生成，只有 Master 才拥有槽的所有权。Master 节点维护着一个 16384/8 字节的位序列，Master 节点用 bit 来标识对于某个槽自己是否拥有。比如对于编号为 1 的槽，Master 只要判断序列的第二位（索引从 0 开始）是不是为 1 即可。这种结构很容易添加或者删除节点。比如如果我想新添加个节点 D, 我需要从节点 A、B、C 中得部分槽到 D 上。</p>
+<h3 id="缓存与数据库不一致怎么办">缓存与数据库不一致怎么办</h3>
+<p>假设采用的主存分离，读写分离的数据库，如果一个线程 A 先删除缓存数据，然后将数据写入到主库当中，这个时候，主库和从库同步没有完成，线程 B 从缓存当中读取数据失败，从从库当中读取到旧数据，然后更新至缓存，这个时候，缓存当中的就是旧的数据。</p>
+<p>发生上述不一致的原因在于，主从库数据不一致问题，加入了缓存之后，主从不一致的时间被拉长了</p>
+<p>处理思路：在从库有数据更新之后，将缓存当中的数据也同时进行更新，即当从库发生了数据更新之后，向缓存发出删除，淘汰这段时间写入的旧数据。</p>
+<h2 id="mongodb">MongoDB</h2>
+<h3 id="mongodb的优点">mongoDB的优点</h3>
+<p>MongoDB 是一个面向文档存储的数据库，操作起来比较简单和容易</p>
+<p>横向扩展性强</p>
+<p>key value 的存储形式</p>
+<h2 id="mybatis">Mybatis</h2>
+<h3 id="mybaits的一级缓存和二级缓存">mybaits的一级缓存和二级缓存</h3>
+<p><strong>一级缓存</strong>: 基于 PerpetualCache 的 HashMap 本地缓存，其存储作用域为 Session，当 Session flush 或 close 之后，该 Session 中的所有 Cache 就将清空，默认打开一级缓存。</p>
+<p>二级缓存与一级缓存其机制相同，默认也是采用 PerpetualCache，HashMap 存储，不同在于其存储作用域为 Mapper(Namespace)，并且可自定义存储源，如 Ehcache。默认不打开二级缓存，要开启二级缓存，使用二级缓存属性类需要实现Serializable序列化接口(可用来保存对象的状态),可在它的映射文件中配置 ；</p>
+<h3 id="mybatis一级缓存不够了二级缓存不够了怎么办">mybatis一级缓存不够了?二级缓存不够了?怎么办</h3>
+<h3 id="和的区别是什么">#{}和${}的区别是什么？</h3>
+<p>#{}是预编译处理，${}是字符串替换。</p>
+<p>Mybatis 在处理#{}时，会将 sql 中的#{}替换为?号，调用 PreparedStatement 的set 方法来赋值；</p>
+<p>Mybatis 在处理<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow></mrow><mi mathvariant="normal">时</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">就</mi><mi mathvariant="normal">是</mi><mi mathvariant="normal">把</mi></mrow><annotation encoding="application/x-tex">{}时，就是把</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0em;vertical-align:0em;"></span><span class="mord"></span><span class="mord cjk_fallback">时</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">就</span><span class="mord cjk_fallback">是</span><span class="mord cjk_fallback">把</span></span></span></span>{}替换成变量的值。</p>
+<p>使用#{}可以有效的防止 SQL 注入，提高系统安全性。</p>
+<h2 id="hibernate">Hibernate</h2>
+<h2 id="linux">Linux</h2>
+<p>tail -f xxx.log 查看文件</p>
+<p>cat xxx.log  查看文件全部</p>
+<p>tar -zxvf</p>
+<p>ps  -ef | grep java</p>
+<h2 id="消息中间件">消息中间件</h2>
+<h3 id="rabbitmq">RabbitMQ</h3>
+<h4 id="保证消息不会被重复消费">保证消息不会被重复消费</h4>
+<h5 id="发送方确认模式">发送方确认模式:</h5>
+<p>将信道设置成 confirm 模式（发送方确认模式），则所有在信道上发布的消息都会被指派一个唯一的 ID。</p>
+<h5 id="接收方确认机制">接收方确认机制</h5>
+<p>消费者接收每一条消息后都必须进行确认（消息接收和消息确认是两个不同操作）。只有消费者确认了消息，RabbitMQ 才能安全地把消息从队列中删除。</p>
+<h4 id="保证消息不丢失">保证消息不丢失</h4>
+<h5 id="消息持久化">消息持久化</h5>
+<h5 id="ack确认机制">ACK确认机制</h5>
+<h5 id="confirm机制与return机制">Confirm机制与Return机制</h5>
+<h5 id="消息补偿机制-将消息持久化到db成功改变状态创建消息补偿服务重新发送消息">消息补偿机制 --&gt;将消息持久化到DB,成功改变状态,创建消息补偿服务重新发送消息.</h5>
+<h4 id="使用mq的好处">使用MQ的好处</h4>
+<p>好处:服务间高度解耦 , 异步通信性能高 ,流量削峰</p>
+<h4 id="rabbitmq-模式">RabbitMQ 模式</h4>
+<p>单机模式、普通集群模式、镜像集群模式</p>
+<h4 id="如何保证消息的顺序性">如何保证消息的顺序性</h4>
+<p>如果一个queue对应多个consumer,那么就会出现消息乱序的现象</p>
+<p>解决:拆分成多个queue,每个queue对应一个consumer,</p>
+<h4 id="如何保证消息持久化">如何保证消息持久化</h4>
+<p>设置queue的持久化  通过durable=true来实现的,设置了队列持久化,并不保证消息持久化.需要对消息进行持久化</p>
+<pre><code class="language-java">Connection connection = connectionFactory.newConnection();
+Channel channel = connection.createChannel();
+channel.queueDeclare(&quot;queue.persistent.name&quot;, true, false, false, null);
+
+完整方法定义
+Queue.DeclareOk queueDeclare(String queue, boolean durable, boolean exclusive, boolean autoDelete,Map&lt;String, Object&gt; arguments) throws IOException;
+
+</code></pre>
+<p>设置消息持久化 deliveryMode=1代表不持久化，deliveryMode=2代表持久化</p>
+<pre><code class="language-java">channel.basicPublish(EXCHANGE_NAME,&quot;&quot;,MessageProperties.PERSISTENT_TEXT_PLAIN,message.getBytes());
+
+MessageProperties.PERSISTENT_TEXT_PLAIN == 2 
+</code></pre>
+<p>设置exchange(交换机)的持久化  如果exchange不持久化,当broker重启后,exchange不复存在,producer就无法正常发送消息. durable字段设置为true</p>
+<h2 id="elasticsearchlogstashkibana">Elasticsearch,Logstash,Kibana</h2>
+<h3 id="es的倒排索引">Es的倒排索引</h3>
+<p>倒排索引，是通过分词策略，形成了词和文章的映射关系表，这种词典+映射表即为倒排索引</p>
+<h3 id="es的概念">ES的概念</h3>
+<p>ElasticSearch 是一个基于 Lucene 构建的。它提供了一个分布式多用户能力的全文搜索引擎，基于 RESTful API 的 web 接口.</p>
+<h3 id="kibana概念">Kibana概念</h3>
+<p>数据可视化平台工具</p>
+<h3 id="logstash概念">logstash概念</h3>
+<p>logstash是一个数据采集、加工处理以及传输的工具</p>
+<h3 id="elasticsearch是如何实现master选举的">Elasticsearch是如何实现Master选举的</h3>
+<h3 id="es的相关概念">ES的相关概念</h3>
+<p>Node： 装有一个 ES 服务器的节点。</p>
+<p>Cluster： 有多个Node组成的集群</p>
+<p>Document： 一个可被搜素的基础信息单元</p>
+<p>Index： 拥有相似特征的文档的集合</p>
+<p>Type： 一个索引中可以定义一种或多种类型</p>
+<p>Filed： 是 ES 的最小单位，相当于数据的某一列</p>
+<p>Shards： 索引的分片，每一个分片就是一个 Shard</p>
+<p>Replicas： 索引的拷贝</p>
+<h2 id="spring-mvc-2">Spring MVC</h2>
+<h3 id="springmvc的流程">SpringMVC的流程</h3>
+<p>用户发送请求给前端控制器.前端控制器根据请求的URL给到页面控制器进行处理.页面控制器接到请求后,将请求参数绑定到一个对象上.然后将这个对象交给业务对象进行处理.处理完成后会返回一个模型数据和逻辑视图名.前端控制器根据逻辑视图名,选择相应的视图进行渲染.将模型数据传入相应的视图中.最后将响应返回给用户.</p>
+<h2 id="struts2">Struts2</h2>
+<h2 id="kubernetes">kubernetes</h2>
+<h2 id="docker">Docker</h2>
+<h3 id="构建镜像的方式">构建镜像的方式</h3>
+<p>基于dockerfile创建(自动构建)</p>
+<p>下载好的jdk和tomcat传到虚机上并解压，Dockerfile文件</p>
+<p>手动构建 docker commit</p>
+<h3 id="docker-常用命令">docker 常用命令</h3>
+<p>查看进程 :docker ps</p>
+<p>查看镜像:docker images</p>
+<p>拉取镜像:docker pull</p>
+<p>打标签: docker tag</p>
+<p>删除镜像: docker rmi</p>
+<p>启动容器: docker run</p>
+<h3 id="docker-容器如何互相访问">docker 容器如何互相访问</h3>
+<h4 id="虚拟ip">虚拟IP</h4>
+<p>用同样的方式启动容器,查看内部IP,在一个网段</p>
+<h4 id="link">Link</h4>
+<p>运行容器的时候加上link</p>
+<p>运行第一个 docker run -it --name centos-1 docker.io/centos:latest</p>
+<p>运行第二个 docker run -it --name centos-2 --link centos-1:centos-1 docker.io/centos:latest</p>
+<h4 id="创建bridge网络">创建bridge网络</h4>
+<p>创建bridge网络 docker network create testnet</p>
+<p>运行容器连接到testnet网络 docker run -it --name &lt;容器名&gt; ---network <bridge> --network-alias &lt;网络别名&gt; &lt;镜像名&gt;</p>
+<h3 id="docker的4中网络模式">Docker的4中网络模式</h3>
+<p>host模式 	–net=host 	容器和宿主机共享Network namespace。</p>
+<p>container模式 	–net=container:NAME_or_ID 	容器和另外一个容器共享Network namespace。 kubernetes中的pod就是多个容器共享一个Network namespace。</p>
+<p>none模式 	–net=none 	容器有独立的Network namespace，但并没有对其进行任何网络设置，如分配veth pair 和网桥连接，配置IP等。</p>
+<p>bridge模式 	–net=bridge 	（默认为该模式）</p>
+<h2 id="io">IO</h2>
+<h3 id="io流有几种类型">IO流有几种类型</h3>
+<h4 id="字节流">字节流</h4>
+<p>InputStream</p>
+<p>OutputStream</p>
+<h4 id="字符流">字符流</h4>
+<p>Reader</p>
+<p>Writer</p>
+<h3 id="nio">NIO</h3>
+<h2 id="多线程">多线程</h2>
+<h3 id="三个线程顺序执行">三个线程顺序执行</h3>
+<p>在多线程中有多种方法让线程按特定顺序执行，你可以用线程类的join()方法在一个线程中启动另一个线程，另外一个线程完成该线程继续执行。为了确保三个线程的顺序你应该先启动最后一个(T3调用T2，T2调用T1)，这样T1就会先完成而T3最后完成。</p>
+<h3 id="线程的创建方式">线程的创建方式</h3>
+<p>1.继承 <strong>Thread</strong> <strong>类</strong></p>
+<p>2实现<strong>Runnable</strong> <strong>接口</strong></p>
+<p>3.实现 <strong>Callable</strong> 接口</p>
+<p>4.基于<strong>线程池</strong>的方式</p>
+<h3 id="常用的线程池有哪些线程池的好处">常用的线程池有哪些?线程池的好处?</h3>
+<h5 id="newcachedthreadpool-executorsnewcachedthreadpool">newCachedThreadPool -&gt;Executors.newCachedThreadPool（）</h5>
+<h5 id="newfixedthreadpool-executorsnewfixedthreadpoolint">newFixedThreadPool -&gt;Executors.newFixedThreadPool（int)</h5>
+<h5 id="newscheduledthreadpool-executorsnewscheduledthreadpoolint">newScheduledThreadPool -&gt;Executors.newScheduledThreadPool(int);</h5>
+<h5 id="newsinglethreadexecutor-executorsnewsinglethreadexecutor">newSingleThreadExecutor -&gt;Executors.newSingleThreadExecutor（）</h5>
+<h5 id="线程池的好处">线程池的好处</h5>
+<p>降低资源消耗。通过重复利用已创建的线程降低线程创建和销毁造成的消耗。</p>
+<p>提高响应速度。当任务到达时，任务可以不需要的等到线程创建就能立即执行。</p>
+<p>提高线程的可管理性。线程是稀缺资源，如果无限制的创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一的分配，调优和监控。</p>
+<h3 id="线程池的原理">线程池的原理</h3>
+<p>线程池做的工作主要是控制运行的线程的数量，处理过程中将任务放入队列，然后在线程创建后启动这些任务，</p>
+<p>如果线程数量超过了最大数量超出数量的线程排队等候，等其它线程执行完毕，再从队列中取出任务来执行。</p>
+<p>他的主要特点为：线程复用；控制最大并发数；管理线程。</p>
+<h3 id="手写线程池">手写线程池</h3>
+<p>corePoolSize 线程池核心线程大小；</p>
+<p>maximumPoolSize 线程池最大线程数量；</p>
+<p>keepAliveTime 空闲线程存活时间；</p>
+<p>unit 空闲线程存活时间单位；</p>
+<p>workQueue 工作队列；</p>
+<p>threadFactory 线程工厂；</p>
+<p>handler 拒绝策略；</p>
+<h3 id="线程池流程">线程池流程</h3>
+<p>线程池执行任务,去线程池中去拿资源,判断线程池中核心线程数是不是满了,没满使用核心线程数进行执行,如果满了,则判断任务队列,如果任务队列没满,则放入队列等待执行, 如果队列也满了,则判断最大线程,如果最大线程数也满了,就执行拒绝策略处理任务</p>
+<h3 id="线程池拒绝策略">线程池拒绝策略</h3>
+<p>AbortPolicy         -- 当任务添加到线程池中被拒绝时，它将抛出 RejectedExecutionException 异常。 (默认)</p>
+<p>CallerRunsPolicy    -- 当任务添加到线程池中被拒绝时，会在线程池当前正在运行的Thread线程池中处理被拒绝的任务。</p>
+<p>DiscardOldestPolicy -- 当任务添加到线程池中被拒绝时，线程池会放弃等待队列中最旧的未处理任务，然后将被拒绝的任务添加到等待队列中。</p>
+<p>DiscardPolicy       -- 当任务添加到线程池中被拒绝时，线程池将丢弃被拒绝的任务。</p>
+<h2 id="java锁">Java锁</h2>
+<h3 id="cas乐观锁">CAS(乐观锁)</h3>
+<p>CAS是一种更新的原子操作,比较当前值和传入值是否一样,一样则更新,否则失败</p>
+<p>CAS结合volatile可以实现无锁并发,适用于竞争不激烈,多核CPU的场景下.</p>
+<p>CAS底层依赖Unsafe类来调用操作系统的CAS指令</p>
+<p>缺点:ABA问题 --&gt;假设线程A读到当前值是10，可能B线程把值修改成100，线程C又把值改为10.线程A拿到执行权的时候，当前值和内存值是一样的，线程A是可以修改的,从线程A的角度来说，这个值从未被修改。这个不合理，这就是所谓的ABA问题</p>
+<p>解决ABA -&gt; Java提供了AtomicStampedReference类供我们使用，说白了就是加个版本。内存之+版本是否一致。</p>
+<h3 id="乐观锁">乐观锁</h3>
+<p>乐观锁适用于读多写少的场景,遇到并发写的可能性很低.</p>
+<p>每次去拿数据的时候都认为别人不会修改,所以不会进行加锁</p>
+<p>每次去更新的时候都要去验证一下别人有没有去更新数据,采取在写的时候先读取版本号,然后加锁操作.比较版本号是否和上次一致,一样则更新,不一样则失败.</p>
+<p>乐观锁通过CAS进行操作实现.数据库版本号.</p>
+<h3 id="悲观锁">悲观锁</h3>
+<p>写多的场景,遇到并发写的可能性高</p>
+<p>每次去拿数据的时候都认为别人会修改,所以每次去读写数据的时候都会进行加锁.这样别人在读写的时候就会block住,直到拿到锁为止.</p>
+<p>java中的悲观锁就是Synchronized.</p>
+<p>实现:悲观锁的实现采用的数据库内部的锁机制，一个典型的倚赖数据库的悲观锁调用：select * from account where name=”张三” for update</p>
+<h3 id="造成死锁的原因">造成死锁的原因</h3>
+<p>当前线程拥有其他线程需要的资源,当前线程等待其他线程已拥有的资源,都不放弃自己拥有的资源</p>
+<h3 id="避免死锁的方案">避免死锁的方案</h3>
+<p>固定加锁的顺序,比如可以使用hash值得大小来确定加锁的先后</p>
+<p>尽量缩减加锁的范围,等到操作共享变量的时候才加锁.</p>
+<p>使用可释放的定时锁(一段时间申请不到锁的权限,直接释放掉)</p>
+<h3 id="synchronized锁优化">synchronized锁优化</h3>
+<p>每个对象都有对象头(包括class指针和mark word)md 8个字节</p>
+<p>每个线程的栈帧都包含一个锁记录的结构.</p>
+<p>如果一个对象虽然有多线程访问,但是多线程访问的时间是错开的.那么就可以使用轻量级锁来优化.</p>
+<h4 id="轻量级锁">轻量级锁</h4>
+<p>线程访问同步块,将mark word复制到线程1的锁记录中,CAS修改mark work为线程的锁记录地址.成功加锁,获取锁的所有权,执行同步代码块.执行完毕解锁.</p>
+<h4 id="锁重入">锁重入</h4>
+<p>线程访问同步代码块,将md复制到线程的锁记录中,CAS修改md时失败,发现md中记录的是自己的锁记录地址,发生锁重入获得锁的所有权,执行同步代码块.执行完毕解锁.</p>
+<h4 id="偏向锁">偏向锁</h4>
+<p>轻量级锁在没有竞争时(只有一个线程),每次重入都要执行CAS,偏向锁来做进一步优化,只有第一次使用CAS将线程ID设置到对象的md中,之后在访问的时候,发现线程id是自己的就不需要CAS了.</p>
+<p>偏向锁弊端: (弊大于利) 1.撤销偏向锁,需要将持锁线程升级为轻量级锁,这个过程需要STW  2.访问对象的hashCode也会撤销偏向锁</p>
+<p>可以使用 -XX:UseBiaseLocking禁用偏向锁.</p>
+<h4 id="锁膨胀轻量级锁升级为重量级锁">锁膨胀(轻量级锁升级为重量级锁)</h4>
+<p>线程1访问同步代码块,将md复制到线程1的锁记录中,CAS修改mark,获取锁的所有权,执行同步代码块.</p>
+<p>此时线程2访问同步代码块,将md复制到线程2的锁记录中,CAS修改md时失败,发现被别的线程占用,CAS修改md为重量锁.进入阻塞状态.</p>
+<p>线程1执行完同步代码块解锁失败(此时md已经被线程2修改),线程1释放重量锁,唤起阻塞线程竞争.</p>
+<p>线程1和线程2竞争重量锁.</p>
+<h4 id="重量级锁">重量级锁</h4>
+<h5 id="自旋重试成功">自旋重试成功</h5>
+<p>线程1访问同步代码块,获取monitor,成功加锁,执行代码块.</p>
+<p>此时线程2访问同步代码块,获取monitor失败,发生自旋(在重新去获取锁)</p>
+<p>线程1执行完同步代码块解锁成功,此时线程2自旋重试获取锁,成功加锁,执行代码块.</p>
+<h5 id="自旋重试失败">自旋重试失败</h5>
+<p>线程1访问同步代码块,获取monitor,成功加锁,执行代码块.</p>
+<p>此时线程2访问同步代码块,获取monitor失败,发生自旋(在重新去获取锁),重试多次后依然没有获得锁,线程进入阻塞状态.</p>
+<h4 id="其他优化">其他优化</h4>
+<p>减少上锁时间 --&gt;同步代码块尽量短</p>
+<p>减少锁力度--&gt; 将一个锁拆分为多个锁提高并发度 例如ConcurrentHashMap,</p>
+<p>锁粗化 --&gt;多次循环进入代码块改为同步代码块内多次循环  例如:new StringBuffer().append(&quot;a&quot;).append(&quot;b&quot;).append(&quot;c&quot;)</p>
+<p>锁消除 --&gt;JVM会进行代码逃逸分析.例如:某个加锁对象是方法内的局部变量,不会被其他线程访问到,这时候就会被即时编译器忽略掉所有的同步操作.</p>
+<p>读写分离--&gt; 例如使用并发容器在juc包下  CopyOnWriteArrayList   CopyOnWriteArraySet</p>
+<h3 id="synchronized怎么保证原子性可见性有序性">synchronized怎么保证原子性,可见性,有序性.</h3>
+<p>1.原子性：一个操作或者多个操作 要么全部执行并且执行的过程不会被任何因素打断，要么就都不执行</p>
+<p>保证原子性：线程在进入synchronized修饰的代码块的时候，会执行monitorentor指令进行加锁。加锁后其它线程无法获取到锁，直到线程主动释放。</p>
+<p>2.可见性：当多个线程访问同一个变量时，一个线程修改了这个变量的值，其他线程能够立即看得到修改的值。</p>
+<p>保证可见性：被synchronized修饰的代码，在执行开始时会进行加锁，执行完成时进行解锁。在解锁之前需要将变量同步到主内存中。这样解锁后，其它线程访问的就是被修改后的值了。</p>
+<p>3.有序性： 程序执行的顺序按照代码的先后顺序执行。</p>
+<p>保证有序性：被synchronized修饰的代码，同一时间只有一个线程访问，需要遵循as-if-serial语义(单线程不管怎么重排，执行结果不能改变)。</p>
+<h3 id="说说-synchronized-关键字和-volatile关键字的区别">说说 synchronized 关键字和 volatile关键字的区别</h3>
+<p>1.synchronized 关键字和 volatile 关键字是两个互补的存在，⽽不是对⽴的存在！</p>
+<p>2.volatile关键字是线程同步的轻量级实现，所以 volatile性能肯定⽐ synchronized 关键字要好。但是 volatile 关键字只能⽤于变量⽽ synchronized关键字可以修饰⽅法以及代码块。</p>
+<p><strong>3.volatile</strong> 关键字能保证数据的可⻅性，但不能保证数据的原⼦性。 <strong>synchronized</strong> 关键字两者都能保证。</p>
+<p>4.volatile 关键字主要⽤于解决变量在多个线程之间的可⻅性，⽽ synchronized 关键字解决的是多个线程之间访问资源的同步性。</p>
+<h3 id="synchronized的底层原理">synchronized的底层原理</h3>
+<h4 id="synchronized修饰同步语句块">synchronized修饰同步语句块</h4>
+<p>synchronized 同步语句块的实现使用的是 monitorenter 和 monitorexit 指令，其中monitorenter 指令指向同步代码块的开始位置，monitorexit 指令则指明同步代码块的结束位置。</p>
+<p>当执行 monitorenter 指令时，线程试图获取锁也就是获取 monitor(monitor对象存在于每个Java对象的对象头中，synchronized 锁便是通过这种方式获取锁的，也是为什么Java中任意对象可以作为锁的原因) 的持有权.当计数器为0则可以成功获取，获取后将锁计数器设为1也就是加1。</p>
+<p>相应的在执行monitorexit 指令后，将锁计数器设为0，表明锁被释放。如果获取对象锁失败，那当前线程就要阻塞等待，直到锁被另外一个线程释放为止。</p>
+<h4 id="synchronized-修饰方法的的情况">synchronized 修饰方法的的情况</h4>
+<p>synchronized 修饰的方法并没有 monitorenter 指令和 monitorexit 指令，取得代之的是ACC_SYNCHRONIZED 标识，该标识指明了该方法是一个同步方法，JVM 通过该 ACC_SYNCHRONIZED访问标志来辨别一个方法是否声明为同步方法，从而执行相应的同步调用。</p>
+<h3 id="volatile怎么禁止指令重排">volatile怎么禁止指令重排</h3>
+<p>内存屏障 happens-before</p>
+<h2 id="分布式">分布式</h2>
+<h3 id="分布式锁">分布式锁</h3>
+<h5 id="为什么要采用分布式锁">为什么要采用分布式锁</h5>
+<p>成员变量 A 存在 JVM1、JVM2、JVM3 三个 JVM 内存中成员变量 A 同时都会在 JVM 分配一块内存，三个请求发过来同时对这个变量操作，显然结果是不对的,不是同时发过来，三个请求分别操作三个不同 JVM 内存区域的数据，变量 A 之间不存在共享，也不具有可见性，处理的结果也是不对的 注：该成员变量 A 是一个有状态的对象</p>
+<h5 id="实现方式">实现方式:</h5>
+<p><strong>Redis</strong>:利用 Redis 的 <code>setnx</code> 命令。此命令同样是原子性操作，只有在 <code>key</code> 不存在的情况下，才能 <code>set</code> 成功</p>
+<p>redisson(对redis操作又进一步封装) ,项目中使用redisson 进行登录账号的数量判断在线用户是否超过license的数量</p>
+<h3 id="分布式任务调度">分布式任务调度</h3>
+<h4 id="xxl-job">xxl-job</h4>
+<h3 id="分布式事务">分布式事务</h3>
+<p>分布式系统环境下由不同的服务之间通过网络远程协作完成事务称之为<strong>分布式事务</strong></p>
+<h3 id="分布式数据的原子性">分布式数据的原子性</h3>
+<h3 id="jwt流">JWT流</h3>
+<figure data-type="image" tabindex="3"><img src="https://muyang24.github.io/post-images/1658738206922.png" alt="" loading="lazy"></figure>
+<p>用户登录：提供用户名和密码；</p>
+<p>JWT生成token和refresh_token，返回客户端；（注意：refresh_token的过期时间长于token的过期时间）</p>
+<p>客户端保存token和refresh_token,并携带token,请求服务端资源；</p>
+<p>服务端判断token是否过期，若没有过期，则解析token获取认证相关信息，认证通过后，将服务器资源返回给客户端；</p>
+<p>服务端判断token是否过期，若token已过期，返回token过期提示；</p>
+<p>客户端获取token过期提示后，用refresh_token接着继续上一次请求；</p>
+<p>服务端判断refresh_token是否过期，若没有过期，则生成新的token和refresh_token，并返回给客户端,客户端丢弃旧的token,保存新的token；</p>
+<p>服务端判断refresh_token是否过期,若refresh_token已过期,则返回给客户端token过期，需要重新登录的提示。</p>
+<h2 id="网络">网络</h2>
+<h3 id="http的请求报文和响应报文">HTTP的请求报文和响应报文</h3>
+<p>http的请求报文由请求头,请求体,空行,请求体(请求数据)组成</p>
+<p>http的响应报文由状态码,响应头,空行,响应体(响应数据)组成</p>
+<h3 id="http的请求方法">HTTP的请求方法</h3>
+<p>GET,POST,PUT,DELETE,OPTIONT,TRACE,CONNECT,HEAD</p>
+<h3 id="http的请求过程">HTTP的请求过程</h3>
+<h4 id="1客户端连接到web服务器">1.客户端连接到WEB服务器</h4>
+<p>一个http客户端,通常是浏览器 与web服务器的HTTP端口(默认是80),建立一个TCP套接字连接.</p>
+<h4 id="2发送http请求">2.发送HTTP请求</h4>
+<p>通过TCP套接字,客户端向web服务器发送一个文本的请求报文.</p>
+<h4 id="3服务器接收到报文返回http响应">3.服务器接收到报文返回HTTP响应</h4>
+<p>web服务器解析请求,定位请求的资源,服务器将资源文本写到TCP套接字,由客户端进行读取.</p>
+<h4 id="4释放tcp连接">4.释放TCP连接</h4>
+<p>若TCP的模式为close,则服务器会自动关闭连接.客户端被动关闭连接.释放TCP连接.</p>
+<p>若TCP的模式为keepalive,则该连接会保持一段时间,在时间内可以继续接收请求.</p>
+<h4 id="5客户端浏览器解析html内容">5.客户端浏览器解析HTML内容</h4>
+<p>客户端首先会检查状态行,查看状态码是否成功.解析响应头和响应数据,在浏览器中展示.</p>
+<h3 id="tcp和udp">TCP和UDP</h3>
+<p>tcp和udp都是协议</p>
+<p>tcp面向连接,udp无连接</p>
+<p>tcp传输可靠,udp不可靠</p>
+<p>tcp效率低 ,udp效率高</p>
+<p>tcp保证顺序性,udp不保证顺序性</p>
+<h3 id="tcp的连接过程三次握手">TCP的连接过程(三次握手)</h3>
+<h4 id="第一次握手-客户端向服务端发送连接请求报文段">第一次握手 客户端向服务端发送连接请求报文段</h4>
+<p>该报文段中包含自身的数据通讯初始序号。请求发送后，客户端便进入 SYN-SENT 状态</p>
+<h4 id="第二次握手-服务端收到连接请求报文段后如果同意连接则会发送一个应答">第二次握手 服务端收到连接请求报文段后，如果同意连接，则会发送一个应答</h4>
+<p>该应答中也会包含自身的数据通讯初始序号，发送完成后便进入 SYN-RECEIVED 状态</p>
+<h4 id="第三次握手-当客户端收到连接同意的应答后还要向服务端发送一个确认报文">第三次握手 当客户端收到连接同意的应答后，还要向服务端发送一个确认报文</h4>
+<p>客户端发完这个报文段后便进入 ESTABLISHED 状态，服务端收到这个应答后也进入 ESTABLISHED 状态，此时连接建立成功。</p>
+<h3 id="http和https区别">HTTP和HTTPS区别</h3>
+<p>https 协议需要到 ca 申请证书，一般免费证书较少，因而需要一定费用</p>
+<p>http 是超文本传输协议，信息是明文传输，https 则是具有安全性的 ssl 加密传输协议</p>
+<p>http 和 https 使用的是完全不同的连接方式，用的端口也不一样，前者 是 80，后者是 443</p>
+<p>http 的连接很简单，是无状态的；HTTPS 协议是由 SSL+HTTP 协议构 建的可进行加密传输、身份认证的网络协议，比 http 协议安全</p>
+<h2 id="笔试题">笔试题</h2>
+<h3 id="写一个死锁代码">写一个死锁代码</h3>
+<pre><code class="language-java">public class DeadLock{
+    static Object o1 = new Object();
+    static Object o2 = new Object();
+
+    public static void main(String[] args) {
+        new Thread(new Runnable() {
+            public void run() {
+                synchronized (o1) {
+                    System.out.println(&quot;线程1锁o1&quot;);
+                    try {
+                        Thread.sleep(1000);//让当前线程睡眠，保证让另一线程得到o2，防止这个线程启动一下连续获得o1和o2两个对象的锁。
+                        synchronized (o2) {
+                            System.out.println(&quot;线程1锁o2&quot;);
+                        }
+                    } catch (InterruptedException e) {                  
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            public void run() {
+                synchronized (o2) {
+                    System.out.println(&quot;线程2锁o2&quot;);
+                    synchronized (o1) {
+                        System.out.println(&quot;线程2锁o1&quot;);
+                    }
+                }
+            }
+        }).start();
+    }
+}
+</code></pre>
+<h3 id="int-取出最大的值">int[] 取出最大的值</h3>
+<pre><code class="language-java">		public static int getMaxNum(int[] num) {
+            int max = num[ 0 ];
+            for (int i = 0; i &lt; num.length; i++) {
+                if (max &lt; num[ i ]) {
+                    max = num[ i ];
+                }
+            }
+            return max;
+        }
+</code></pre>
+<h3 id="斐波那契">斐波那契</h3>
+<pre><code class="language-java">public class Solution {
+    public int Fibonacci(int n) {
+        if(n == 0) {
+            return 0;
+        }
+        if(n == 1) {
+            return 1;
+        }
+        return Fibonacci(n-1) + Fibonacci(n-2);
+    }
+}
+
+</code></pre>
+<h3 id="创建链表">创建链表</h3>
+<pre><code class="language-java">public class ListNode {
+    int val;
+    ListNode next;
+
+    ListNode() {
+    }
+
+    ListNode(int val) {
+        this.val = val;
+    }
+
+    /**
+     * @return
+     * @description: 添加
+     * @Param
+     * @author sunhao
+     * @date 2021-06-16 10:09
+     */
+    public void add(int newval) {
+
+        ListNode newNode = new ListNode(newval);
+        if (this.next == null)
+            this.next = newNode;
+        else {
+            this.next.add(newval);
+        }
+    }
+
+    /**
+     * @return
+     * @description: 打印
+     * @Param
+     * @author sunhao
+     * @date 2021-06-16 10:09
+     */
+    public void print() {
+        System.out.print(this.val);
+        if (this.next != null) {
+            System.out.print(&quot;--&gt;&quot;);
+            this.next.print();
+        }
+    }
+
+}
+</code></pre>
+<h3 id="单链表转换倒置">单链表转换倒置</h3>
+<pre><code class="language-java">public class ReverseList {
+    public ListNode reverseList(ListNode head) {
+        ListNode prev = null;
+        ListNode curr = head;
+        while (curr != null) {
+
+            ListNode next = curr.next;
+
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+
+    public static void main(String[] args) {
+        ListNode listNode = new ListNode();
+        listNode.add(1);
+        listNode.add(2);
+        listNode.add(3);
+        listNode.add(4);
+        listNode.add(5);
+        listNode.print();
+        System.out.println();
+        ListNode listNode1 = new ReverseList().reverseList(listNode);
+        listNode1.print();
+    }
+}
+</code></pre>
+<h3 id="合并链表">合并链表</h3>
+<pre><code class="language-java">public class MergeTwoLists {
+
+
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+
+        if (l1 == null) return l2;
+        if (l2 == null) return l1;
+        ListNode l3 = new ListNode(0);
+        ListNode node1 = l1;
+        ListNode node2 = l2;
+        ListNode node3 = l3;
+        while (node1 != null &amp;&amp; node2 != null) {
+            if (node1.val &lt;= node2.val) {
+                node3.next = node1;
+                node1 = node1.next;
+            } else {
+                node3.next = node2;
+                node2 = node2.next;
+            }
+            node3 = node3.next;
+        }
+        node3.next = node1 != null ? node1 : node2;
+        return l3.next;
+    }
+
+    public static void main(String[] args) {
+
+        ListNode listNode = new ListNode();
+        listNode.add(1);
+        listNode.add(2);
+        listNode.add(3);
+        listNode.add(4);
+        listNode.add(5);
+        listNode.print();
+        System.out.println();
+        ListNode listNode1 = new ListNode();
+        listNode1.add(1);
+        listNode1.add(2);
+        listNode1.add(3);
+        listNode1.add(4);
+        listNode1.add(5);
+        listNode1.print();
+        System.out.println();
+        ListNode listNode2 = new MergeTwoLists().mergeTwoLists(listNode, listNode1);
+        listNode2.print();
+    }
+}
+</code></pre>
+<h2 id="设计模式">设计模式</h2>
+<h3 id="单例模式">单例模式</h3>
+<p>一个应用程序中，某个类的实例对象只有一个</p>
+<h4 id="饿汉式">饿汉式</h4>
+<pre><code class="language-java">//饿汉式 --创建时就创建
+public class Singleton {
+   
+    // 直接创建对象
+    public static Singleton instance = new Singleton();
+   
+    // 私有化构造函数
+    private Singleton() {
+    }
+
+    // 返回对象实例
+    public static Singleton getInstance() {
+        return instance;
+  
+  }
+</code></pre>
+<h4 id="懒汉式">懒汉式</h4>
+<pre><code class="language-java">public class Singleton {
+    // 声明变量
+    private static volatile Singleton singleton = null;
+    // 私有构造函数
+    private Singleton() {
+    }
+    // 提供对外方法
+    public static Singleton getInstance() {
+        if (singleton == null) {
+            synchronized (Singleton.class) {
+                if (singleton == null) {
+                    singleton = new Singleton();
+                }
+            }
+        }
+        return singleton;
+    }
+}
+</code></pre>
+<h4 id="双重检验锁">双重检验锁</h4>
+<pre><code class="language-java">public class Signton {
+    private  static  volatile  Signton signton;
+    private  Signton(){
+    }
+    public  static  Signton getInstance(){
+        if(signton==null){
+            synchronized (Signton.class){
+                if(signton==null){
+                    signton=new Signton();
+                }
+            }
+        }
+        return signton;
+    }
+}
+</code></pre>
+<h3 id="工厂模式">工厂模式</h3>
+<h3 id="观察者模式">观察者模式</h3>
+<p>当对象间存在一对多关系时，则使用观察者模式（Observer Pattern）。比如，当一个对象被修改时，则会自动通知依赖它的对象。观察者模式属于行为型模式.  springboot 监听</p>
+<h2 id="算法">算法</h2>
+<h3 id="复杂度">复杂度</h3>
+<p>常数级别 :增长的数量级--&gt; 1 | 说明--&gt;普通语句 | 举例--&gt;将两个数相加</p>
+<p>对数级别:增长的数量级--&gt; logN | 说明--&gt;二分策略 | 举例--&gt;二分查找</p>
+<p>线性级别 :增长的数量级--&gt; N | 说明--&gt;循环 | 举例--&gt;找出最大元素</p>
+<p>线性对数级别 :增长的数量级--&gt; NlogN | 说明--&gt;分治思想 | 举例--&gt;归并排序</p>
+<p>平方级别 :增长的数量级--&gt; N^2 | 说明--&gt;双层循环 | 举例--&gt;检查所以元素对</p>
+<p>立方级别 :增长的数量级--&gt; N^3 | 说明--&gt;三层循环 | 举例--&gt;检查所有三元组</p>
+<p>指数级别 :增长的数量级--&gt; 2^N | 说明--&gt;穷举查找 | 举例--&gt;检查所有子集</p>
+<p>复杂度程度从低到高 O(1)&lt;O(logN)&lt;O(n)&lt;O(NlogN)&lt;O(N<sup>2)&lt;O(N</sup>3)</p>
+<h3 id="冒泡排序">冒泡排序</h3>
+<pre><code class="language-java">public class demo_sort {
+    public static void main(String[] args) {
+        //冒泡排序算法
+        int[] numbers=new int[]{1,5,8,2,3,9,4};
+        //需进行length-1次冒泡
+        for(int i=0;i&lt;numbers.length-1;i++)
+        {
+            for(int j=0;j&lt;numbers.length-1-i;j++)
+            {
+                if(numbers[j]&gt;numbers[j+1])
+                {
+                    int temp=numbers[j];
+                    numbers[j]=numbers[j+1];
+                    numbers[j+1]=temp;
+                }
+            }
+        }
+        System.out.println(&quot;从小到大排序后的结果是:&quot;);
+        for(int i=0;i&lt;numbers.length;i++)
+            System.out.print(numbers[i]+&quot; &quot;);
+    }
+}
+</code></pre>
+<h3 id="快速排序">快速排序</h3>
+<pre><code class="language-java">public class KuaiPai {
+
+    public static void main(String[] args) {
+        int a[] = { 49, 38, 65, 97, 76, 13, 27, 49, 78, 34, 12, 64, 5, 4,
+                62, 99, 98, 54, 56, 17, 18, 23, 34, 15, 35, 25, 53, 51 };
+        if (a.length &gt; 0) {//查看数组是否为空  
+            quickSort(a, 0, a.length - 1);
+        }
+        System.out.println(Arrays.toString(a));
+    }
+  
+    public static void quickSort(int[] arr, int left, int right) {
+        if (left &gt;= right) {
+            return;
+        }
+        int low = left;
+        int high = right;
+        int tmp = arr[low];//数组的第一个作为中轴  
+        while (low &lt; high) {
+            while (low &lt; high &amp;&amp; arr[high] &gt;= tmp) {
+                high--;
+            }
+            arr[low] = arr[high];//比中轴小的记录移到低端  
+
+            while (low &lt; high &amp;&amp; arr[low] &lt;= tmp) {
+                low++;
+            }
+            arr[high] = arr[low];//比中轴大的记录移到高端  
+        }
+        arr[low] = tmp;//中轴记录到尾  
+        quickSort(arr, left, low - 1);//对低字表进行递归排序  
+        quickSort(arr, low + 1, right);//对高字表进行递归排序  
+    }
+}
+</code></pre>
+]]></content>
+    </entry>
+</feed>
